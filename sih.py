@@ -51,19 +51,18 @@ if page == "Home":
     st.dataframe(st.session_state.students)
 
 elif page == "Data Input":
-    st.title("Enter Student Data")
-    with st.form("input_form"):
-        name = st.text_input("Student Name")
-        age = st.number_input("Age", min_value=10, max_value=100, value=20)
-        gpa = st.slider("GPA", 0.0, 4.0, 2.5, 0.1)
-        attendance = st.number_input("Attendance (%)", min_value=0, max_value=100, value=80)
-        submitted = st.form_submit_button("Submit")
+    st.title("Enter Student Data (Live Prediction)")
 
-    if submitted:
-        if not name.strip():
-            st.error("Please enter a valid student name.")
-        else:
-            pred = predict_dropout(age, gpa, attendance)
+    name = st.text_input("Student Name")
+    age = st.number_input("Age", min_value=10, max_value=100, value=20)
+    gpa = st.slider("GPA", 0.0, 4.0, 2.5, 0.1)
+    attendance = st.number_input("Attendance (%)", min_value=0, max_value=100, value=80)
+
+    if name.strip():
+        pred = predict_dropout(age, gpa, attendance)
+        st.write(f"Predicted dropout probability for **{name.strip()}**: **{pred:.2%}**")
+
+        if st.button("Add this student to the dataset"):
             new_row = {
                 "Student": name.strip(),
                 "Age": age,
@@ -72,8 +71,9 @@ elif page == "Data Input":
                 "Dropout Probability": pred
             }
             st.session_state.students = st.session_state.students.append(new_row, ignore_index=True)
-            st.success(f"Data submitted for {name}!")
-            st.write(f"Predicted dropout probability: **{pred:.2%}**")
+            st.success(f"Student {name.strip()} added!")
+    else:
+        st.info("Please enter the student's name to see prediction.")
 
 elif page == "Prediction Results":
     st.title("Prediction Results & Visualization")
@@ -94,3 +94,4 @@ elif page == "Prediction Results":
         st.write(data.describe())
     with col2:
         st.write("Additional info or visualizations here.")
+
