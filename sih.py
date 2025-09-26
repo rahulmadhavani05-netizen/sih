@@ -108,6 +108,13 @@ elif page == "Prediction Results":
     with col1:
         st.write("### Summary Stats")
         st.write(data.describe())
+
+    # ✅ FIX: Added content for col2
     with col2:
-
-
+        st.write("### Highest Dropout Risk")
+        max_risk_student = data.loc[data['Dropout Probability'].idxmax()]
+        st.metric(
+            label="Highest Risk Student",
+            value=max_risk_student['Student'],
+            delta=f"{max_risk_student['Dropout Probability']:.2%}"
+        )
